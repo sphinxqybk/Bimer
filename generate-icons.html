@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Icons</title>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        // Generate main app icon
+        function generateMainIcon(size) {
+            const canvas = document.getElementById('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Background gradient
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#667eea');
+            gradient.addColorStop(1, '#764ba2');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            // Clock face circle
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size*0.35, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Clock numbers
+            ctx.fillStyle = '#333';
+            ctx.font = `${size*0.08}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            for (let i = 1; i <= 12; i++) {
+                const angle = (i * 30 - 90) * Math.PI / 180;
+                const x = size/2 + Math.cos(angle) * size * 0.28;
+                const y = size/2 + Math.sin(angle) * size * 0.28;
+                ctx.fillText(i.toString(), x, y);
+            }
+            
+            // Clock hands
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = size * 0.02;
+            ctx.lineCap = 'round';
+            
+            // Hour hand (pointing to 10)
+            ctx.beginPath();
+            ctx.moveTo(size/2, size/2);
+            const hourAngle = (10 * 30 - 90) * Math.PI / 180;
+            ctx.lineTo(size/2 + Math.cos(hourAngle) * size * 0.15, 
+                      size/2 + Math.sin(hourAngle) * size * 0.15);
+            ctx.stroke();
+            
+            // Minute hand (pointing to 2)
+            ctx.beginPath();
+            ctx.moveTo(size/2, size/2);
+            const minuteAngle = (2 * 30 - 90) * Math.PI / 180;
+            ctx.lineTo(size/2 + Math.cos(minuteAngle) * size * 0.22, 
+                      size/2 + Math.sin(minuteAngle) * size * 0.22);
+            ctx.stroke();
+            
+            // Center dot
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size*0.02, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        // Generate stopwatch icon
+        function generateStopwatchIcon(size) {
+            const canvas = document.getElementById('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#48bb78';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Stopwatch body
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.arc(size/2, size*0.55, size*0.3, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Stopwatch button
+            ctx.fillStyle = '#333';
+            ctx.fillRect(size*0.45, size*0.15, size*0.1, size*0.15);
+            
+            // Play symbol
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.moveTo(size*0.45, size*0.45);
+            ctx.lineTo(size*0.55, size*0.55);
+            ctx.lineTo(size*0.45, size*0.65);
+            ctx.closePath();
+            ctx.fill();
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        // Generate countdown icon
+        function generateCountdownIcon(size) {
+            const canvas = document.getElementById('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Background
+            ctx.fillStyle = '#ed8936';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Timer circle
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size*0.35, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Progress arc
+            ctx.strokeStyle = '#ed8936';
+            ctx.lineWidth = size * 0.05;
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size*0.35, -Math.PI/2, Math.PI/2);
+            ctx.stroke();
+            
+            // Numbers
+            ctx.fillStyle = '#333';
+            ctx.font = `${size*0.15}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('5:00', size/2, size/2);
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        // Generate all icon sizes
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        
+        console.log('Copy and paste these data URLs to create icon files:');
+        console.log('\n=== MAIN APP ICONS ===');
+        sizes.forEach(size => {
+            const dataUrl = generateMainIcon(size);
+            console.log(`${size}x${size}:`, dataUrl);
+        });
+        
+        console.log('\n=== STOPWATCH ICON ===');
+        const stopwatchIcon = generateStopwatchIcon(96);
+        console.log('96x96:', stopwatchIcon);
+        
+        console.log('\n=== COUNTDOWN ICON ===');
+        const countdownIcon = generateCountdownIcon(96);
+        console.log('96x96:', countdownIcon);
+    </script>
+</body>
+</html>

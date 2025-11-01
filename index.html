@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bimer. Book Tracking By Sphinxqybk</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="Bimer - Book Reading Timer and Tracker App">
+    <meta name="theme-color" content="#667eea">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Bimer Tracking">
+    <meta name="msapplication-TileColor" content="#667eea">
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicon and Apple Touch Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icons/icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="icons/icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="icons/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="icons/icon-128x128.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="icons/icon-96x96.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="icons/icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="57x57" href="icons/icon-72x72.png">
+    
+    <!-- Microsoft Tiles -->
+    <meta name="msapplication-TileImage" content="icons/icon-144x144.png">
+    <meta name="msapplication-config" content="browserconfig.xml">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>⏰ Bimer</h1>
+        
+        <!-- Install Button -->
+        <div id="install-container" class="install-container" style="display: none;">
+            <button id="install-button" class="btn btn-primary install-btn">
+                📱 ติดตั้งแอป (Install App)
+            </button>
+        </div>
+        
+        <!-- Tab Navigation -->
+        <div class="tabs">
+            <button class="tab-button active" data-tab="stopwatch">⏱️ จับเวลา</button>
+            <button class="tab-button" data-tab="countdown">⏰ นับถอยหลัง</button>
+            <button class="tab-button" data-tab="reading">📚 อ่านหนังสือ</button>
+            <button class="tab-button" data-tab="library">📖 คลังหนังสือ</button>
+        </div>
+
+        <!-- Stopwatch Tab -->
+        <div id="stopwatch" class="tab-content active">
+            <div class="timer-display">
+                <span id="stopwatch-display">00:00:00</span>
+            </div>
+            <div class="controls">
+                <button id="stopwatch-start" class="btn btn-primary">เริ่ม</button>
+                <button id="stopwatch-pause" class="btn btn-warning">หยุด</button>
+                <button id="stopwatch-reset" class="btn btn-secondary">รีเซ็ต</button>
+            </div>
+            <div class="laps">
+                <h3>รอบที่จับได้:</h3>
+                <ul id="lap-list"></ul>
+                <button id="lap-button" class="btn btn-info">จับรอบ</button>
+            </div>
+        </div>
+
+        <!-- Countdown Tab -->
+        <div id="countdown" class="tab-content">
+            <div class="timer-setup">
+                <div class="time-inputs">
+                    <div class="input-group">
+                        <label>ชั่วโมง</label>
+                        <input type="number" id="hours" min="0" max="23" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label>นาที</label>
+                        <input type="number" id="minutes" min="0" max="59" value="5">
+                    </div>
+                    <div class="input-group">
+                        <label>วินาที</label>
+                        <input type="number" id="seconds" min="0" max="59" value="0">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="timer-display">
+                <span id="countdown-display">05:00</span>
+            </div>
+            
+            <div class="controls">
+                <button id="countdown-start" class="btn btn-primary">เริ่มนับถอยหลัง</button>
+                <button id="countdown-pause" class="btn btn-warning">หยุด</button>
+                <button id="countdown-reset" class="btn btn-secondary">รีเซ็ต</button>
+            </div>
+            
+            <div class="progress-bar">
+                <div id="progress" class="progress-fill"></div>
+            </div>
+        </div>
+
+        <!-- Reading Tracker Tab -->
+        <div id="reading" class="tab-content">
+            <!-- Reading Timer Section -->
+            <div id="reading-timer" class="reading-section">
+                <h3>⏱️ เครื่องจับเวลาสำหรับการอ่าน</h3>
+                
+                <!-- Book Selection for Reading -->
+                <div class="book-selection-for-reading">
+                    <label class="form-label">📚 เลือกหนังสือที่จะอ่าน</label>
+                    <select id="reading-book-select" class="reading-select">
+                        <option value="">-- เลือกหนังสือ --</option>
+                    </select>
+                    <div class="reading-book-actions">
+                        <button id="add-new-book-quick" class="btn btn-secondary btn-small">+ เพิ่มหนังสือใหม่</button>
+                        <button id="view-library-btn" class="btn btn-info btn-small">📖 ดูคลังหนังสือ</button>
+                    </div>
+                </div>
+
+                <!-- Timer Controls -->
+                <div class="timer-section">
+                    <div class="timer-display" id="reading-timer-display">00:00:00</div>
+                    <div class="timer-controls">
+                        <button id="start-reading" class="btn btn-primary">▶️ เริ่มอ่าน</button>
+                        <button id="pause-reading" class="btn btn-warning" style="display: none;">⏸️ หยุดชั่วคราว</button>
+                        <button id="stop-reading" class="btn btn-danger" style="display: none;">⏹️ หยุดอ่าน</button>
+                    </div>
+                </div>
+
+                <!-- Current Session Info -->
+                <div id="current-session" class="current-session" style="display: none;">
+                    <h4>📖 กำลังอ่าน</h4>
+                    <div class="session-info">
+                        <div class="session-book">
+                            <span class="book-title" id="current-book-title">ชื่อหนังสือ</span>
+                            <span class="book-author" id="current-book-author">ผู้แต่ง</span>
+                        </div>
+                        <div class="session-time">
+                            <span class="session-duration"><span id="session-label">เวลาเซสชั่น</span>: <strong id="session-time">00:00:00</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Current Reading Session -->
+            <div id="current-reading" class="reading-section" style="display: none;">
+                <div class="reading-header">
+                    <button id="back-to-add-book" class="btn btn-secondary btn-small">← เพิ่มหนังสือ</button>
+                    <h3 id="old-current-book-title">📖 กำลังอ่าน: </h3>
+                </div>
+                <div class="timer-display">
+                    <span id="reading-display">00:00:00</span>
+                </div>
+                <div class="controls">
+                    <button id="reading-start" class="btn btn-primary">เริ่มอ่าน</button>
+                    <button id="reading-pause" class="btn btn-warning">หยุดพัก</button>
+                    <button id="reading-finish" class="btn btn-info">เสร็จสิ้น & บันทึก</button>
+                </div>
+                <div class="session-info">
+                    <p>📊 เซสชั่นนี้: <span id="current-session-time">00:00:00</span></p>
+                    <p>📚 เวลารวม: <span id="total-book-time">00:00:00</span></p>
+                </div>
+            </div>
+
+            <!-- Add New Book Section -->
+            <div id="add-book-section" class="reading-section">
+                <h3>📚 เพิ่มหนังสือใหม่</h3>
+                
+                <div class="book-form">
+                    <div class="input-group">
+                        <input type="text" id="book-title" placeholder="ชื่อหนังสือ เช่น Harry Potter และศิลาอาถรรพ์" maxlength="100">
+                        <input type="text" id="book-author" placeholder="ผู้แต่ง เช่น J.K. Rowling (ไม่บังคับ)" maxlength="50">
+                        
+                        <div class="date-time-section">
+                            <label class="form-label">📅 วันที่เริ่มอ่าน (ไม่บังคับ)</label>
+                            <div class="date-time-inputs">
+                                <input type="date" id="book-start-date" class="date-input">
+                                <input type="time" id="book-start-time" class="time-input">
+                            </div>
+                        </div>
+                        
+                        <button id="add-book" class="btn btn-primary">📚 เพิ่มหนังสือ</button>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h4>🚀 การดำเนินการเร็ว</h4>
+                    <p>หลังจากเพิ่มหนังสือแล้ว คุณสามารถ:</p>
+                    <div class="action-buttons">
+                        <button id="go-to-library" class="btn btn-info">📖 ดูคลังหนังสือ</button>
+                        <button id="start-reading-latest" class="btn btn-primary" style="display: none;">▶️ เริ่มอ่านเลย</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reading Statistics -->
+            <div id="reading-stats" class="reading-section">
+                <h3>📊 สถิติการอ่าน</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-books">0</div>
+                        <div class="stat-label">เล่ม</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-time">0</div>
+                        <div class="stat-label">ชั่วโมงรวม</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="total-sessions">0</div>
+                        <div class="stat-label">เซสชั่น</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Library Tab -->
+        <div id="library" class="tab-content">
+            <!-- Book Selection -->
+            <div id="book-selection" class="reading-section">
+                <h3>📖 คลังหนังสือของฉัน</h3>
+                
+                <!-- Data Management -->
+                <div class="data-management">
+                    <button id="export-data" class="btn btn-secondary btn-small">📥 ส่งออกข้อมูล</button>
+                    <button id="import-data" class="btn btn-secondary btn-small">📤 นำเข้าข้อมูล</button>
+                    <button id="select-mode" class="btn btn-info btn-small">✅ เลือก</button>
+                </div>
+                
+                <!-- Selection Actions (Hidden by default) -->
+                <div id="selection-actions" class="selection-actions" style="display: none;">
+                    <div class="selection-info">
+                        <span id="selected-count">0 รายการที่เลือก</span>
+                        <button id="select-all" class="btn btn-small btn-secondary">✅ เลือกทั้งหมด</button>
+                        <button id="deselect-all" class="btn btn-small btn-secondary">❌ ยกเลิกทั้งหมด</button>
+                    </div>
+                    <div class="bulk-actions">
+                        <button id="bulk-edit" class="btn btn-small btn-info">✏️ แก้ไขที่เลือก</button>
+                        <button id="bulk-delete" class="btn btn-small btn-danger">🗑️ ลบที่เลือก</button>
+                        <button id="cancel-selection" class="btn btn-small btn-secondary">❌ ยกเลิก</button>
+                    </div>
+                </div>
+                
+                <!-- Search and Filter -->
+                <div class="library-controls">
+                    <div class="search-section">
+                        <input type="text" id="book-search" placeholder="🔍 ค้นหาหนังสือ..." class="search-input">
+                    </div>
+                    <div class="filter-section">
+                        <select id="book-filter" class="filter-select">
+                            <option value="all">📚 ทั้งหมด</option>
+                            <option value="reading">📖 กำลังอ่าน</option>
+                            <option value="finished">✅ อ่านจบแล้ว</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Books List -->
+                <div class="books-list">
+                    <div id="books-container">
+                        <p class="no-books">ยังไม่มีหนังสือ ไปเพิ่มเล่มแรกของคุณกันเถอะ!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book Details Modal -->
+            <div id="book-details" class="reading-section" style="display: none;">
+                <div class="book-details-header">
+                    <button id="back-to-books" class="btn btn-secondary btn-small">← กลับ</button>
+                    <h3 id="book-details-title">📖 รายละเอียดหนังสือ</h3>
+                    <button id="refresh-book-details" class="btn btn-secondary btn-small">🔄 รีเฟรช</button>
+                </div>
+                
+                <div class="book-summary">
+                    <div class="book-summary-info">
+                        <h4 id="details-book-title">ชื่อหนังสือ</h4>
+                        <p id="details-book-author">ผู้แต่ง</p>
+                        <div class="book-summary-stats">
+                            <span class="total-reading-time">เวลารวม: <strong id="details-total-time">0:00:00</strong></span>
+                            <span class="total-sessions-count">เซสชั่น: <strong id="details-session-count">0</strong></span>
+                        </div>
+                    </div>
+                    <div class="book-actions">
+                        <button id="start-reading-book" class="btn btn-success btn-small">▶️ เริ่มอ่าน</button>
+                        <button id="finish-book" class="btn btn-primary btn-small">✅ อ่านจบแล้ว</button>
+                    </div>
+                </div>
+
+                <div class="sessions-history">
+                    <h4>📋 ประวัติการอ่าน</h4>
+                    <div id="sessions-list">
+                        <p class="no-sessions">ยังไม่มีประวัติการอ่าน</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Book Modal -->
+            <div id="edit-book-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h4>✏️ แก้ไขข้อมูลหนังสือ</h4>
+                    <div class="input-group">
+                        <input type="text" id="edit-book-title" placeholder="ชื่อหนังสือ">
+                        <input type="text" id="edit-book-author" placeholder="ผู้แต่ง">
+                    </div>
+                    <div class="modal-actions">
+                        <button id="save-book-edit" class="btn btn-primary">💾 บันทึก</button>
+                        <button id="cancel-book-edit" class="btn btn-secondary">❌ ยกเลิก</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finish Book Modal -->
+            <div id="finish-book-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h4>📖 บันทึกการอ่านจบ</h4>
+                    <p class="finish-book-subtitle">กรอกวันที่และเวลาที่อ่านจบ</p>
+                    
+                    <div class="finish-datetime-section">
+                        <div class="finish-datetime-inputs">
+                            <div class="datetime-group">
+                                <label>📅 วันที่อ่านจบ</label>
+                                <input type="date" id="finish-date" required>
+                            </div>
+                            <div class="datetime-group">
+                                <label>⏰ เวลาที่อ่านจบ</label>
+                                <input type="time" id="finish-time" required>
+                            </div>
+                        </div>
+                        
+                        <div class="finish-notes-section">
+                            <label class="form-label">📝 บันทึกความรู้สึก (ไม่บังคับ)</label>
+                            <textarea id="finish-notes" placeholder="เช่น หนังสือดีมาก ชอบตัวละครหลัก..." rows="3"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button id="save-finish-book" class="btn btn-primary">✅ บันทึกการอ่านจบ</button>
+                        <button id="cancel-finish-book" class="btn btn-secondary">❌ ยกเลิก</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Confirm Modal (generic) -->
+            <div id="confirm-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h4 id="confirm-title">⚠️ ยืนยันการทำรายการ</h4>
+                    <p id="confirm-message">คุณแน่ใจหรือไม่?</p>
+                    <div class="modal-actions">
+                        <button id="confirm-yes" class="btn btn-warning">ตกลง</button>
+                        <button id="confirm-no" class="btn btn-secondary">ยกเลิก</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio for countdown alarm -->
+    <audio id="alarm-sound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+D" type="audio/wav">
+    </audio>
+
+    <script src="script.js"></script>
+    
+    <!-- PWA Registration Script -->
+    <script>
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch((registrationError) => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
+        
+        // Install prompt
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+        const installContainer = document.getElementById('install-container');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later
+            deferredPrompt = e;
+            // Show install button
+            installContainer.style.display = 'block';
+        });
+        
+        installButton.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`User response to the install prompt: ${outcome}`);
+                // Clear the deferredPrompt
+                deferredPrompt = null;
+                // Hide install button
+                installContainer.style.display = 'none';
+            }
+        });
+        
+        // Hide install button if app is already installed
+        window.addEventListener('appinstalled', () => {
+            installContainer.style.display = 'none';
+            console.log('PWA was installed');
+        });
+        
+        // Handle URL parameters for shortcuts
+        const urlParams = new URLSearchParams(window.location.search);
+        const tab = urlParams.get('tab');
+        if (tab && (tab === 'stopwatch' || tab === 'countdown' || tab === 'reading')) {
+            // Wait for DOM to load then switch tab
+            document.addEventListener('DOMContentLoaded', () => {
+                const tabButton = document.querySelector(`[data-tab="${tab}"]`);
+                if (tabButton) {
+                    tabButton.click();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
