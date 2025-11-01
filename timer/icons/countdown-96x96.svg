@@ -1,0 +1,13 @@
+<svg width="96" height="96" xmlns="http://www.w3.org/2000/svg">
+  <rect width="96" height="96" fill="#ed8936" rx="14.4"/>
+  <circle cx="48" cy="48" r="33.6" fill="rgba(255,255,255,0.9)" stroke="#333" stroke-width="1"/>
+  
+  <!-- Progress arc (3/4 circle) -->
+  <path d="M 48 14.4 A 33.6 33.6 0 1 1 14.4 48" stroke="#ed8936" stroke-width="4.8" fill="none"/>
+  
+  <!-- Timer display -->
+  <text x="48" y="48" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="12" fill="#333" font-weight="bold">5:00</text>
+  
+  <!-- Timer text -->
+  <text x="48" y="84" text-anchor="middle" dominant-baseline="middle" font-family="Arial" font-size="10" fill="white" font-weight="bold">TIMER</text>
+</svg>
